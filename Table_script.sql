@@ -5,7 +5,7 @@
 --  DDL for Table FD
 --------------------------------------------------------
 
-  CREATE TABLE "DB"."FD" 
+  CREATE TABLE "FD" 
    (	"TRANS_NUM" VARCHAR2(128 BYTE), 
 	"TRANS_DATE_TRANS_TIME" VARCHAR2(30 BYTE), 
 	"CATEGORY" VARCHAR2(26 BYTE), 
