@@ -27,4 +27,4 @@ IS_FRAUD
 7. Open Data_Wrangling_part1.ipynb again, and execute the rest codes.
 
 8. Execute Data_Wrangling_part2.ipynb
-
+(Data labeling)
