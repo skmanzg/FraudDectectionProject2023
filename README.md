@@ -20,7 +20,11 @@ DOB
 IS_FRAUD
 
 5. Import table from data/Fraud_Detection.csv
-(Check the tablespace storage size)
+
+Check the tablespace storage size.
+If storage is lack, execute this command in SQL:
+ALTER DATABASE DATAFILE 'dbf path' resize size;
+Type the storage size you want in 'size' space.
 
 6. Execute SQL_work.sql
 
