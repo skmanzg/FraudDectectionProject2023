@@ -6,7 +6,7 @@
 
 3. Open Oracle SQL Developer and execute Table_script.sql
 
-4. Create format of table following this columns.
+format of table's columns is,
 TRANS_NUM
 TRANS_DATE_TRANS_TIME
 CATEGORY
@@ -19,12 +19,19 @@ JOB
 DOB
 IS_FRAUD
 
-5. Import table from data/Fraud_Detection.csv
+4. Import data to "FD" table from data/Fraud_Detection.csv
 (Check the tablespace storage size)
+If tablespace is lack, type the sql prompt command.
+a. SELECT * FROM DBA_DATA_FILES;
+-> Find the path of SYSTEM.DBF
+b. ALTER DATABASE DATAFILE 'path' RESIZE 9G;
 
-6. Execute SQL_work.sql
+5. Execute SQL_work.sql
 
-7. Open Data_Wrangling_part1.ipynb again, and execute the rest codes.
+6. Open Data_Wrangling_part1.ipynb again, and execute the rest codes.
 
-8. Execute Data_Wrangling_part2.ipynb
+7. Execute Data_Wrangling_part2.ipynb
 (Data labeling)
+
+8. Execute save_splited_table.ipynb
+
