@@ -28,10 +28,14 @@ b. ALTER DATABASE DATAFILE 'path' RESIZE 9G;
 
 5. Execute SQL_work.sql
 
-6. Open Data_Wrangling_part1.ipynb again, and execute the rest codes.
+6. Execute SQL_datatype_modify.sql
 
-7. Execute Data_Wrangling_part2.ipynb
+7. Execute SQL_create_features.sql
+
+8. Open Data_Wrangling_part1.ipynb again, and execute the rest codes.
+
+9. Execute Data_Wrangling_part2.ipynb
 (Data labeling)
 
-8. Execute save_splited_table.ipynb
+10. Execute save_splited_table.ipynb
 
