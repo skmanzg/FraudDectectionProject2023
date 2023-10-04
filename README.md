@@ -8,6 +8,7 @@
 
 format of table's columns is,
 TRANS_NUM
+CC_NUM
 TRANS_DATE_TRANS_TIME
 CATEGORY
 AMT
