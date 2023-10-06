@@ -38,7 +38,7 @@ UPDATE fd SET Trans_day = extract (day from TRANS_DATE_TRANS_TIME);
 ALTER TABLE fd ADD (Trans_hour NUMBER);
 UPDATE fd SET Trans_hour = extract (hour from cast(TRANS_DATE_TRANS_TIME as timestamp));
 
-commit
+commit;
 
 
 -- test hour split test  <- decode말고 case when 쓰자
