@@ -35,3 +35,7 @@ b. ALTER DATABASE DATAFILE 'path' RESIZE 9G;
 7. Run SQL_create_features.sql
 
 8. Run Data_Wrangling_part2.ipynb
+
+9. Run save_splitted_table.ipynb
+
+10. Run data_analysis.ipynb and data_analysis2.ipynb to see the graph.
