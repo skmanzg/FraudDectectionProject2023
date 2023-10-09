@@ -39,3 +39,5 @@ b. ALTER DATABASE DATAFILE 'path' RESIZE 9G;
 9. Run save_splitted_table.ipynb
 
 10. Run data_analysis.ipynb and data_analysis2.ipynb to see the graph.
+
+11. Run Model/Model_main.ipynb for learning and testing the model.
