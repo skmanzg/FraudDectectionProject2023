@@ -9,6 +9,7 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from tensorflow import keras
 import datetime as dt
 
@@ -17,8 +18,6 @@ import datetime as dt
 
 
 def ColumnsExtractor_CNN(data, isLearn):
-    print("ColumnsExtractor_CNN START")
-    print("parameter is : \n", data)
     reduced_data_CNN = pd.read_csv("../data/ordered_by_ccnum_and_day.csv", index_col=0) #data_analysis.ipynb에서 생성하세요, 컬럼 포맷 맞추기
     if(not ("DAY" in data.columns)): #DAY컬럼이 없다면 추가
         list1 = []
@@ -57,6 +56,8 @@ def abs_value(val):
     else:
         return val
 
+def sigmoid_(x):
+    return (1 / (1 + np.exp(-x)))
 
 # In[6]:
 
@@ -117,7 +118,6 @@ def TableConverter(reduced_data, isLearn, gamma):
     reduced_data2 = reduced_data2.sort_values(by=["CC_NUM"] ,ascending=True)
     reduced_data2 = reduced_data2.reset_index(drop=True)
     
-    print("reduced_data2reduced_data2reduced_data2reduced_data2\n\n\n", reduced_data2)
     for ccnum_fraud_row in range(gamma - 1,reduced_data2.shape[0]): #ccnum_fraud_row는 압축되지 않은 idx
         if(ccnum_fraud_row % 1000 == 0):
             print("ccnum_fraud_row :", ccnum_fraud_row)
@@ -169,18 +169,15 @@ def DifferenceGenerator(data_converted, isLearn, gamma, mu):
     differenceSequence = pd.DataFrame([], columns=["DIFF", "FRAUD_TODAY"])
 
     if(isLearn):
-        print("data_converteddata_converteddata_converted\n\n\n", data_converted)
         reduced_data_CNN = pd.read_csv("../data/ordered_by_ccnum_and_day.csv", index_col=0)
         reduced_data_CNN = reduced_data_CNN.reset_index(drop=True)
-        print("reduced_data_CNNreduced_data_CNN\n\n\n", reduced_data_CNN)
         day_col = gamma #day부분 column index 초깃값
         fraudtoday_col = 1 + reduced_data_CNN["CC_NUM"].value_counts().max() #FRAUD_TODAY부분 column index 초깃값
         
         for conv_row_idx in range(data_converted.shape[0]):
             if(conv_row_idx % 100 == 0):
-                print("conv_row_idx : ", conv_row_idx)
-            day_col = gamma + 1 #day부분 column index 초깃값
-            fraudtoday_col = 1 + reduced_data_CNN["CC_NUM"].value_counts().max() #FRAUD_TODAY부분 column index 초깃값
+                day_col = gamma + 1 #day부분 column index 초깃값
+                fraudtoday_col = 1 + reduced_data_CNN["CC_NUM"].value_counts().max() #FRAUD_TODAY부분 column index 초깃값
             for k in range((reduced_data_CNN["CC_NUM"].value_counts().max()) - (gamma - 1) - 1): #k는 처음 위치로부터의 column의 변위
                 diff_value = 0
                 if(data_converted.loc[conv_row_idx, "DAY%d" %(day_col + k)] == -1): #현재 k가 가리키는 day의 amt값이 -1이면 다음 행으로
@@ -205,7 +202,6 @@ def DifferenceGenerator(data_converted, isLearn, gamma, mu):
         return differenceSequence
     else: #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 여기가 자꾸 0만 리턴됨!!
         #gamma -1 일 전부터 오늘까지 기록되었던 AMT들이 gamma행x1열 형태로 들어옴
-        print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^data_converted : ", data_converted) #7행 전부 똑같은값만 들어옴
         diff_value2 = 0
         for i in range(1, gamma):
             if(i != (gamma - 1)):
@@ -250,17 +246,15 @@ def DifferenceforFraud(data, isLearn, gamma, delta2, omega, mu): #추론시의 d
     print("DifferenceforFraud START")
     conserved_data = pd.read_csv("../data/ordered_by_ccnum_and_day.csv", index_col=0) #TRANS_YEAR, MONTH, DAY 열을 포함하고 있는 conserved_data 데이터프레임
     reduced_data = ColumnsExtractor_CNN(data, isLearn) #"CC_NUM", "DAY", "AMT", "IS_FRAUD" 열들만 가지는 reduced_data 데이터프레임
-    print("reduced_data", reduced_data)
     global lr
     
     if(isLearn):
-        print("TableConverter")
         data_converted = TableConverter(reduced_data, isLearn, gamma)
         
         global differenceSequence_
         differenceSequence_ = DifferenceGenerator(data_converted, isLearn, gamma, mu)
         differenceSequence_.to_csv("differenceSequence_.csv", index=False)
-        MMscaler2 = MinMaxScaler()
+        Sscaler3 = StandardScaler()
         differenceSequence_duplicated = differenceSequence_["DIFF"].to_frame()
         differenceSequence_duplicated.rename(columns={"DIFF":"DIFF2"}, inplace=True)
         #ok
@@ -268,8 +262,8 @@ def DifferenceforFraud(data, isLearn, gamma, delta2, omega, mu): #추론시의 d
         differenceSequence_ = pd.concat([differenceSequence_, differenceSequence_duplicated], axis=1)
         differenceSequence_fraud = differenceSequence_["FRAUD_TODAY"].to_frame().copy()
         arr_temp = differenceSequence_[["DIFF", "DIFF2"]].__array__()
-        MMscaler2.fit(arr_temp)
-        differenceSequence_scaled_diff = MMscaler2.transform(arr_temp)
+        Sscaler3.fit(arr_temp)
+        differenceSequence_scaled_diff = Sscaler3.transform(arr_temp)
         differenceSequence_scaled_diff = pd.DataFrame(differenceSequence_scaled_diff, columns=["DIFF", "DIFF2"])
         differenceSequence_ = differenceSequence_scaled_diff
         #differenceSequence_ = pd.concat([differenceSequence_, differenceSequence_fraud], axis = 1)
@@ -329,13 +323,8 @@ def DifferenceforFraud(data, isLearn, gamma, delta2, omega, mu): #추론시의 d
         
         idx_order = 0
         ccnum_conserved_data = ccnum_conserved_data.reset_index(drop=True)
-        print("reduced_datareduced_data\n\n", reduced_data)
         day_ = reduced_data.loc[0, "DAY"]
         for i in  range(len(ccnum_conserved_data["DAY"])):
-            print("day_: ", day_)
-            print("i", i)
-            print("ccnum_conserved_data.loc[i, DAY] : ", ccnum_conserved_data.loc[i, "DAY"])
-            print(type(ccnum_conserved_data.loc[i, "DAY"]))
             if(ccnum_conserved_data.loc[i, "DAY"] < day_):
                 idx_order += 1      ###########idx_order가 언제나 0인 문제!
             else:
@@ -363,36 +352,37 @@ def DifferenceforFraud(data, isLearn, gamma, delta2, omega, mu): #추론시의 d
         fraud_of_diff_scalar = fraud_of_diff_scalar[0]
         
         #MinMaxScaler를 위해 differenceSequence_에 diff_scalar를 붙이고 scaling
-        print("@@@@@@@@@@@@@@@@@@diff_scalar : ", diff_scalar)
-        print(type(diff_scalar))
-        print("@@@@@@@@@@@@@@@@@@fraud_of_diff_scalar : ", fraud_of_diff_scalar)
-        print(type(fraud_of_diff_scalar))
         
         data_for_scaling = pd.DataFrame({"DIFF":[diff_scalar], "FRAUD_TODAY":[fraud_of_diff_scalar]})
         differenceSequence_temp = pd.concat([differenceSequence_, data_for_scaling], axis=0)
-        print("HHHHHHHHHHHHHHHHHHHHHHHHHH\n", differenceSequence_temp.tail(6)) #여기서 맨 아랫 행이 제대로 값이 들어가야함
         
-        MMscaler3 = MinMaxScaler()
+        Sscaler3 = StandardScaler()
         differenceSequence_temp2 = differenceSequence_temp["DIFF"].copy()
         differenceSequence_temp2 = differenceSequence_temp2.rename("DIFF2")
         differenceSequence_temp["DIFF2"] = differenceSequence_temp2
         
-        MMscaler3.fit(differenceSequence_temp[["DIFF", "DIFF2"]])
-        differenceSequence_scaled_temp = MMscaler3.transform(differenceSequence_temp[["DIFF", "DIFF2"]])
+        Sscaler3.fit(differenceSequence_temp[["DIFF", "DIFF2"]])
+        differenceSequence_scaled_temp = Sscaler3.transform(differenceSequence_temp[["DIFF", "DIFF2"]])
         differenceSequence_scaled_temp = pd.DataFrame(differenceSequence_scaled_temp, columns=["DIFF", "DIFF2"])
         #differenceSequence_temp["DIFF2"] = differenceSequence_temp
         
-        print("differenceSequence_scaled_temp : ", differenceSequence_scaled_temp)
+        #print("differenceSequence_scaled_temp : ", differenceSequence_scaled_temp)
         input_data = differenceSequence_scaled_temp.tail(1) # AMT가 스케일링 됐고 2열에는 FRAUD여부
         
         input_data = Multiplier(input_data, omega)
         
         print("lr will be exectued......@@\n")
         print("input_data\n", input_data)
-        fraud_predict = lr.predict(input_data[["DIFF", "DIFF2"]])
-        print("predict_proba : ", lr.predict_proba(input_data[["DIFF", "DIFF2"]]))
+        # fraud_predict = lr.predict(input_data[["DIFF", "DIFF2"]])
+        # print("predict_proba : ", lr.predict_proba(input_data[["DIFF", "DIFF2"]]))
+        #print(type(input_data["DIFF"]))
+        predict_proba = sigmoid_(input_data["DIFF"])
         
-        return fraud_predict
+        if(predict_proba.item() >= delta2): # FRAUD
+            return 1
+        else: # NOT FRAUD
+            return 0
+        
         
 
 
