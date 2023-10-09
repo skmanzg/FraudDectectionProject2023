@@ -7,7 +7,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import RobustScaler
 from tensorflow import keras
 
 
@@ -21,7 +21,7 @@ def ColumnsExtractor(data, isLearn):
         reduced_data.loc[:,"IS_FRAUD"] = reduced_data.loc[:,"IS_FRAUD"].astype("int")
     else: # 데이터는 1개의 행
         reduced_data["IS_FRAUD"] = reduced_data["IS_FRAUD"].astype("int")
-    reduced_data.to_csv("reduced_data.csv",index=False) #디버깅용
+    reduced_data.to_csv("reduced_data.csv",index=False)
     return reduced_data
 
 
@@ -38,8 +38,8 @@ def KNNforFraud(df, isLearn, beta, delta1, epsilon):
     
     reduced_data = ColumnsExtractor(df, isLearn)
     
-    #MinMaxScaler 함수로 객체만들고 scaled된 reduced_data_scaled 만들기
-    MMscaler = MinMaxScaler()
+    #스케일링 함수로 객체만들고 scaled된 reduced_data_scaled 만들기
+    MMscaler = RobustScaler()
     if(isLearn):
         MMscaler.fit(reduced_data)
         reduced_data_scaled = MMscaler.transform(reduced_data)
@@ -70,14 +70,14 @@ def KNNforFraud(df, isLearn, beta, delta1, epsilon):
         
         kn1.fit(reduced_data_scaled[["AMT", "TRANS_MONTH"]], reduced_data_scaled["IS_FRAUD"])
         kn2.fit(reduced_data_scaled[["TRANS_MONTH", "TRANS_DAY"]], reduced_data_scaled["IS_FRAUD"])
-        kn3.fit(reduced_data_scaled[["TRANS_DAY", "TRANS_HOUR"]], reduced_data_scaled["IS_FRAUD"])
-        kn4.fit(reduced_data_scaled[["TRANS_HOUR", "CATEGORY"]], reduced_data_scaled["IS_FRAUD"])
-        kn5.fit(reduced_data_scaled[["CATEGORY", "AMT"]], reduced_data_scaled["IS_FRAUD"])
+        kn3.fit(reduced_data_scaled[["AMT", "TRANS_DAY"]], reduced_data_scaled["IS_FRAUD"])
+        kn4.fit(reduced_data_scaled[["AMT", "TRANS_HOUR"]], reduced_data_scaled["IS_FRAUD"])
+        kn5.fit(reduced_data_scaled[["AMT", "CATEGORY"]], reduced_data_scaled["IS_FRAUD"])
         arr1 = kn1.predict_proba(reduced_data_scaled[["AMT", "TRANS_MONTH"]])
         arr2 = kn2.predict_proba(reduced_data_scaled[["TRANS_MONTH", "TRANS_DAY"]])
-        arr3 = kn3.predict_proba(reduced_data_scaled[["TRANS_DAY", "TRANS_HOUR"]])
-        arr4 = kn4.predict_proba(reduced_data_scaled[["TRANS_HOUR", "CATEGORY"]])
-        arr5 = kn5.predict_proba(reduced_data_scaled[["CATEGORY", "AMT"]])
+        arr3 = kn3.predict_proba(reduced_data_scaled[["AMT", "TRANS_DAY"]])
+        arr4 = kn4.predict_proba(reduced_data_scaled[["AMT", "TRANS_HOUR"]])
+        arr5 = kn5.predict_proba(reduced_data_scaled[["AMT", "CATEGORY"]])
         
         arr1 = arr1.reshape(-1, 2)
         arr2 = arr2.reshape(-1, 2)
@@ -108,12 +108,11 @@ def KNNforFraud(df, isLearn, beta, delta1, epsilon):
         FCmodel.fit(NNinput, NNoutput, epochs=epsilon)
         return 2
     else:
-        #2차원을 강제하길래 뒤에 2번째 열은 아무거나 넣어놓음
         arr1 = kn1.predict_proba(reduced_data_scaled[["AMT", "TRANS_MONTH"]])
         arr2 = kn2.predict_proba(reduced_data_scaled[["TRANS_MONTH", "TRANS_DAY"]])
-        arr3 = kn3.predict_proba(reduced_data_scaled[["TRANS_DAY", "AMT"]])
-        arr4 = kn4.predict_proba(reduced_data_scaled[["TRANS_HOUR", "AMT"]])
-        arr5 = kn5.predict_proba(reduced_data_scaled[["CATEGORY", "AMT"]])
+        arr3 = kn3.predict_proba(reduced_data_scaled[["AMT", "TRANS_DAY"]])
+        arr4 = kn4.predict_proba(reduced_data_scaled[["AMT", "TRANS_HOUR"]])
+        arr5 = kn5.predict_proba(reduced_data_scaled[["AMT", "CATEGORY"]])
         
         arr1 = arr1[:,0]
         arr2 = arr2[:,0]
@@ -131,7 +130,7 @@ def KNNforFraud(df, isLearn, beta, delta1, epsilon):
 
         arr_input_df = arr_input_df.T
         
-        print("FCmodel will be Executed...\n")
+        #print("FCmodel will be Executed...\n")
         fraud_predict = FCmodel.predict(arr_input_df)
         fraud_predict = float(fraud_predict)
         
