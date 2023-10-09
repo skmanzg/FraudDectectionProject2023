@@ -111,8 +111,8 @@ def KNNforFraud(df, isLearn, beta, delta1, epsilon):
         #2차원을 강제하길래 뒤에 2번째 열은 아무거나 넣어놓음
         arr1 = kn1.predict_proba(reduced_data_scaled[["AMT", "TRANS_MONTH"]])
         arr2 = kn2.predict_proba(reduced_data_scaled[["TRANS_MONTH", "TRANS_DAY"]])
-        arr3 = kn3.predict_proba(reduced_data_scaled[["TRANS_DAY", "TRANS_HOUR"]])
-        arr4 = kn4.predict_proba(reduced_data_scaled[["TRANS_HOUR", "CATEGORY"]])
+        arr3 = kn3.predict_proba(reduced_data_scaled[["TRANS_DAY", "AMT"]])
+        arr4 = kn4.predict_proba(reduced_data_scaled[["TRANS_HOUR", "AMT"]])
         arr5 = kn5.predict_proba(reduced_data_scaled[["CATEGORY", "AMT"]])
         
         arr1 = arr1[:,0]
