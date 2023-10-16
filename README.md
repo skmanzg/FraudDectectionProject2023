@@ -1,5 +1,17 @@
 # FraudDetectionProject2023
+## 팀원명
+* 나도엽
+* 신승운
 
+## 데이터셋 출처
+https://www.kaggle.com/datasets/kartik2112/fraud-detection?datasetId=817870&sortBy=voteCount
+
+## 프로젝트 개요
+이 프로젝트는 신용카드의 부정거래 데이터를 분석하고, 패턴을 파악하여 그 인사이트를 기반으로 모델을 설계, 구현하는 프로젝트입니다.
+이 프로젝트로부터 나온 인공지능은 80%의 정확도로 신용카드 부정거래 여부를 탐지합니다.
+
+
+----------------------
 1. Download fraudTest.csv and fraudTrain.csv from https://www.kaggle.com/datasets/kartik2112/fraud-detection?datasetId=817870&sortBy=voteCount
 
 2. Run Data_Wrangling_part1.ipynb 
