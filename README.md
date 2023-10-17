@@ -52,17 +52,16 @@ IS_FRAUD는 TARGET 정보임
 
 ### 인공지능 아키텍처 설계
 ![architectureA](./img/img02.png)
-![architectureB](./img/img03.png)
-![architectureC](./img/img04.png)
-
 * 첫 번째 사진은 전체적인 모듈의 흐름을 보여준다.
 	* A모듈은 학습이나 추론을 할 때, B모듈로 갈지, C모듈로 갈지를 결정하는 모듈이다. 매우 간단하기 때문에 따로 사진을 첨부하진 않는다.
+![architectureB](./img/img03.png)
 * 두 번째 사진은 B모듈 아키텍처를 설명하는 사진이다.
 	* Columns Extractor는 이 모듈에서 사용할 컬럼들만 남기고 나머지는 제거하는 모듈이다.
 	* Robust Scaler는 RobustScaler 객체를 적용하는 모듈이다.
 	* KNN 모듈의 반환값은 각각의 2가지 컬럼들을 바탕으로 한 FRAUD의 가능성 예측값이다.
 	* 완전연결층까지 거친 값은 시그모이드 함수로 최종 확률이 정해진다.
 	* 임계값 이상이라면 fraud, 아니라면 not fraud를 반환한다.
+![architectureC](./img/img04.png)
 * 세 번째 사진은 C모듈 아키텍처를 설명하는 사진이다.
 	* Table Converter는 하나의 feature당 하나의 컬럼으로 대응된 테이블을 여러 개의 AMT 컬럼들과 각 AMT별 FRAUD 여부를 나타내는 컬럼들로 변환하는 모듈이다. 이 때 하나의 CC_NUM이 하나의 데이터이다. 즉 CC_NUM별로 시간 순에 따른 AMT들과 각 AMT별 FRAUD여부를 보여주는 테이블로 변환한다는 뜻이다.
 	* Difference Generator는 어떤 AMT값과 그 직전의 AMT값의 차이를 구하고 가중치를 곱해주는 모듈이다.
