@@ -123,11 +123,6 @@ df = df.drop(columns='TRANS_NUM')
 # change the column sequence. 컬럼 순서 병경
 df = df[['TRANS_YEAR','IS_COVID_YEAR', 'TRANS_MONTH','TRANS_DAY','TRANS_DAY_SIMPLIFIED','TRANS_HOUR','TRANS_HOUR_SIMPLIFIED','CATEGORY','AMT','GENDER','CITY','CITY_POP','STATE','JOB','AGE','IS_FRAUD', 'CC_NUM']]
 
-# set binary data as bool
-df['GENDER'] = df['GENDER'].astype('bool')
-df['IS_COVID_YEAR'] = df['IS_COVID_YEAR'].astype('bool')
-df['IS_FRAUD'] = df['IS_FRAUD'].astype('bool')
-
 # put natural log on AMT column to improve
 import numpy as np
 df['log_AMT'] = np.log(df['AMT'])
