@@ -23,15 +23,17 @@ df = df.drop(columns='TRANS_HOUR')
 df = df.drop(columns='CC_NUM')
 df = df.drop(columns='AMT')
 
-# those three requires too many columns for model  이 3개의 변수는 모형에 지나치게 많은 컬럼을 생성한다.
+# those two requires too many columns for model  이 2개의 변수는 모형에 지나치게 많은 컬럼을 생성한다.
 df = df.drop(columns='CITY')
 df = df.drop(columns='JOB')
-df = df.drop(columns='STATE')
 
-# Unlike the AI model, the ML model uses those two columns below 
-# 인공지능 모형과 달리 머신러닝 모형은 아래 두 컬럼을 사용한다.
+
+# Unlike the AI model, the ML model uses those three columns below 
+# 인공지능 모형과 달리 머신러닝 모형은 아래 세 컬럼을 사용한다.
+
 # df = df.drop(columns='CITY_POP')
 # df = df.drop(columns='CATEGORY')
+# df = df.drop(columns='STATE')
 
 
 import lightgbm as lgb
@@ -74,10 +76,10 @@ params = {
     'num_leaves': 100,
     'min_child_samples': 40,  # min_data_in_leaf 
     'reg_alpha': 2,  # lambda_l1 
-    'reg_lambda': 4,  # lambda_l2 
+    'reg_lambda': 3,  # lambda_l2 
     'colsample_bytree': 0.8,  # feature_fraction 
     'learning_rate': 0.5,
-    'verbose':0
+    'verbose':1
     
 }
 # Note that train_data is only chosen!  훈련 데이터만 선택됨에 유의한다!
@@ -87,7 +89,7 @@ model = lgb.train(params, train_data, num_boost_round=300)
 y_pred = model.predict(x_test)
 
 # Transform the prediction into binary numbers  예측값을 이진 분류로 변환
-y_pred_binary = [1 if pred >= 0.326 else 0 for pred in y_pred]
+y_pred_binary = [1 if pred >= 0.14 else 0 for pred in y_pred]
 
 # "Confusion Matrix 혼동행렬
 conf_matrix = confusion_matrix(y_test, y_pred_binary)
@@ -99,8 +101,6 @@ print("Accuracy:", accuracy_score(y_test, y_pred_binary))
 print("Classification Report:\n", classification_report(y_test, y_pred_binary))
 
 
-# Despite 99 accuracy in the test set, the real point is the f1-score considering both precision and recall. This model can __detect fraud with 87%__ probability.  
-# test set에 나오는 점수는 99점으로 준수해보이지만 본질적인 것은 1을 만났을 때 제대로 감지하는 지 여부다. 이 모형은 __87%확률로 부정거래를 감지__ 한다.
+# Despite 99 accuracy of classifications, the point is considering both precision and recall. Although both can be closed to f1-score to be balanced, the banks would usually like to detect fraud transcactions as much as possible in spite of sacrificing its precision. Hence, This model can detect fraud with 91% probability and it precision is 80% 
+# Accuracy 점수는 99점으로 분류 능력 자체는 우수해보이지만 본질적인 것은 1을 만났을 때 제대로 감지하는 지 여부(precision)와 이를 감지하는 민감도(recall)값의 조정이다. 실질적으로 은행은 감지하는 민감도를 정확도보다 상대적으로 더 중요하게 여기므로, f1 점수에 맞게 둘을 0.85로 차이없이 맞추는 대신, 정확성을 조금 희생하고 민감도를 올린 모형이 적절하다고 판단할 수 있다. 이 모형은 91%확률로 부정거래를 감지하고, 그 정확성은 80%이다.
 
-# Feature importance shows AMT, hour(3), category(2), AGE, day(2), month(12) has comparatively strong tendencies.  
-# 이 그래프 결과는 금액 양, 시간(3), 카테고리(2), 나이, 날(2), 12월에 경향성이 높음을 보여준다.  
