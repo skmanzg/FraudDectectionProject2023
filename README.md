@@ -98,7 +98,7 @@ __ML Model and its Reasoning 머신러닝 모델 선정 및 이유__
 1. Logistic regression(Lasso) 
 * 데이터 타겟값은 이상거래 탐지 여부로 분류 형태를 지니고 있다.
 * 부정 거래 데이터가 약 9000개로 전체 160만개 데이터에 비해 매우 적은 숫자임을 고려하여 과적합을 규제하는 Lasso를 선택한다.
-![ML_Lasso](./img/Lasso.png)  
+![ML_Lasso](./img/ML_Lasso.png)  
 __☞ Result 결과__: train score = 0, test score = -50 로 모델 부적합 판정
   
 2. LightGBM(gbdt)
