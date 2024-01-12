@@ -1,5 +1,6 @@
 # FraudDetectionProject2023
 
+
 ## Team 팀원명
 * 나도엽
 * 신승운
@@ -22,6 +23,7 @@
 https://www.kaggle.com/datasets/kartik2112/fraud-detection?datasetId=817870&sortBy=voteCount
 
 ## EDA 데이터 가공
+
 * Oracle SQL을 기반으로 하며, Oracle SQL Developer 툴을 사용함
 
 사용된 컬럼들 정보
@@ -66,14 +68,14 @@ TARGET: IS_FRAUD
 	* Multipllier는 단순히 하나의 컬럼에 실수배를 해 주는 모듈이다.
 	* Sigmoid 부터는 B모듈과 동일
 
-
 * 모델 구현은 py확장자를 사용하여 ipynb에서 import하는 식으로 구성하였다. (사용한 라이브러리)
+
 	* numpy
 	* scikit-learn
 	* pandas
 	* matplotlib
 	* keras(Tensorflow)
-	  
+
 모델 테스트 세트 검증 결과 __정확도 80%__ 성능을 보여주었다.  
   
     
@@ -124,7 +126,7 @@ Feature importance shows AMT, hour(2), category(3), AGE, day(2), month(12), CITY
 * 각 feature의 중요도가 보여주는 것은 인과관계가 아닌 상관관계이다. 그리고 이 상관관계는 부정 거래의 경향성만 보여주는 것이 아닌 160만개의 정상거래도 포함하므로 부정 거래의 트랜드를 파악하기 어렵다.  
   
   
-  
+
 -------------------------
 
 ## 따라하는 방법
@@ -168,6 +170,7 @@ b. ALTER DATABASE DATAFILE 'path' RESIZE 9G;
 9. Run save_splitted_table.ipynb
 
 10. Run data_analysis.ipynb and data_analysis2.ipynb to see the graph.
+
 
 11. Run Model/Model_main.ipynb for learning and testing the model.
 
