@@ -21,7 +21,7 @@
 다음의 웹 사이트에서 fraudTest.csv와 fraudTrain.csv를 다운로드
 https://www.kaggle.com/datasets/kartik2112/fraud-detection?datasetId=817870&sortBy=voteCount
 
-### EDA 데이터 가공
+## EDA 데이터 가공
 * Oracle SQL을 기반으로 하며, Oracle SQL Developer 툴을 사용함
 
 사용된 컬럼들 정보
@@ -42,13 +42,13 @@ TARGET: IS_FRAUD
   
 날짜 형식이 데이터마다 제각각이기 때문에 날짜 형식을 통일하는 SQL 쿼리를 대입
 
-### Data Analysis 데이터 분석 (미완성)
+## Data Analysis 데이터 분석 (미완성)
 가공된 데이터로부터 패턴을 추출
 
 ![fraudgraph](./img/img01.png)  
 하나의 CC_NUM에 대해서 시간 순으로 정렬했을 때, 거래량 차이가 크면 FRAUD일 가능성이 크다고 판단함
 
-### AI Model and its Result 인공지능 아키텍처 설계, 구현 및 성능 결과
+## AI Model and its Result 인공지능 아키텍처 설계, 구현 및 성능 결과
 ![architectureA](./img/img02.png)
 * 첫 번째 사진은 전체적인 모듈의 흐름을 보여준다.
 	* A모듈은 학습이나 추론을 할 때, B모듈로 갈지, C모듈로 갈지를 결정하는 모듈이다. 매우 간단하기 때문에 따로 사진을 첨부하진 않는다.
@@ -78,7 +78,7 @@ TARGET: IS_FRAUD
   
     
 
-### ML Model and its Result 머신러닝 모형 설계, 구현 및 성능 결과
+## ML Model and its Result 머신러닝 모형 설계, 구현 및 성능 결과
 사용한 11개 features: 
 * IS_COVID_YEAR: year의 정보를 담은 것
 * TRANS_MONTH
@@ -94,14 +94,14 @@ TARGET: IS_FRAUD
 __(!)__ CITY와 JOB은 컬럼 더미기법에 의해 지나치게 많은 컬럼을 형성하여 모델 생성이 어려우므로 제외하였다.  
   
   
-__ML Model and its Reasoning 머신러닝 모델 선정 및 이유__  
-1. Logistic regression(Lasso) 
+### ML Model and its Reasoning 머신러닝 모델 선정 및 이유 
+__1. Logistic regression(Lasso)__  
 * 데이터 타겟값은 이상거래 탐지 여부로 분류 형태를 지니고 있다.
 * 부정 거래 데이터가 약 9000개로 전체 160만개 데이터에 비해 매우 적은 숫자임을 고려하여 과적합을 규제하는 Lasso를 선택한다.
 ![ML_Lasso](./img/ML_Lasso.png)  
 __☞ Result 결과__: train score = 0, test score = -50 로 모델 부적합 판정
   
-2. LightGBM(gbdt)
+__2. LightGBM(gbdt)__
 * 성능이 우수하여 인기있는 머신러닝 모형이다.
 * 이상치 영향을 받지 않는 트리 기반 모형이기에 선정하였다.
 * 타겟 데이터 불균형은 SMOTE를 통해 조정하였다.
@@ -112,13 +112,13 @@ Despite 99 accuracy of classifications, the point is considering both precision 
 Accuracy 점수는 99점으로 분류 능력 자체는 우수해보이지만 본질적인 것은 1을 만났을 때 제대로 감지하는 지 여부(precision)와 이를 감지하는 민감도(recall)값의 조정이다. 실질적으로 은행은 감지하는 민감도를 정확도보다 상대적으로 더 중요하게 여기므로, f1 점수에 맞게 둘을 0.85로 차이없이 맞추는 대신, 정확성을 조금 희생하고 민감도를 올린 모형이 적절하다고 판단할 수 있다. 이 모형은 __91%확률로 부정거래를 감지하고, 그 정확성은 80%이다.__
   
 
-__Feature Importanct 모델 변수 중요도 시각화__
+### Feature Importanct 모델 변수 중요도 시각화 
 ![features](./img/LightGBM_features.png)  
 Feature importance shows AMT, hour(2), category(3), AGE, day(2), month(12), CITY_POP and STATE(17) have comparatively strong correlations.  
 이 그래프 결과는 금액 양, 시간(2), 카테고리(3), 나이, 날(2), 12월, 인구 수, 17번 주 지역에서 상대적으로 상관관계가 높음을 보여준다. 
   
   
-__Model Limitation 모델의 한계__
+### Model Limitation 모델의 한계
 * 모델의 민감도와 정확도가 더 개선된 형태가 있을 수 있으나 그것이 LightGBM내에서 개선하기 어려운 상태이다.
 * log_AMT와 CITY_POP 대신에 robust scale을 적용해서 모델을 학습했다면 결과가 더 좋았을까? 에 대한 의문이 있다.
 * 각 feature의 중요도가 보여주는 것은 인과관계가 아닌 상관관계이다. 그리고 이 상관관계는 부정 거래의 경향성만 보여주는 것이 아닌 160만개의 정상거래도 포함하므로 부정 거래의 트랜드를 파악하기 어렵다.  
