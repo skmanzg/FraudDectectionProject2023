@@ -90,8 +90,8 @@ TARGET: IS_FRAUD
 * AGE
 * IS_FRAUD
 * log_AMT: log스케일된 거래 금액
-* BC_CITY_POP: box-cox로 변환된 도시인구
-(!) CITY와 JOB은 컬럼 더미기법에 의해 지나치게 많은 컬럼을 형성하여 모델 생성이 어려우므로 제외하였다.  
+* BC_CITY_POP: box-cox로 변환된 도시인구  
+__(!)__ CITY와 JOB은 컬럼 더미기법에 의해 지나치게 많은 컬럼을 형성하여 모델 생성이 어려우므로 제외하였다.  
   
   
 __ML Model and its Reasoning 머신러닝 모델 선정 및 이유__  
@@ -106,7 +106,7 @@ __☞ Result 결과__: train score = 0, test score = -50 로 모델 부적합 �
 * 이상치 영향을 받지 않는 트리 기반 모형이기에 선정하였다.
 * 타겟 데이터 불균형은 SMOTE를 통해 조정하였다.
 * 세부 파라미터는 수동으로 직접 조정하였다.
-* 모형이 예측한 값에 대한 이진분류 기준은 precision_recall_curve를 이용하여 0.16을 설정하였다.
+* 모형이 예측한 값에 대한 이진분류 기준은 precision_recall_curve를 이용하여 0.16을 설정하였다.  
 __☞ Result 결과__: Accuracy: 0.99, Precision: 0.80, Recall: 0.91  
 Despite 99 accuracy of classifications, the point is considering both precision and recall. Although both can be closed to f1-score to be balanced, the banks would usually like to detect fraud transcactions as much as possible in spite of sacrificing its precision. Hence, This model can __detect fraud with 91% probability and it precision is 80%.__  
 Accuracy 점수는 99점으로 분류 능력 자체는 우수해보이지만 본질적인 것은 1을 만났을 때 제대로 감지하는 지 여부(precision)와 이를 감지하는 민감도(recall)값의 조정이다. 실질적으로 은행은 감지하는 민감도를 정확도보다 상대적으로 더 중요하게 여기므로, f1 점수에 맞게 둘을 0.85로 차이없이 맞추는 대신, 정확성을 조금 희생하고 민감도를 올린 모형이 적절하다고 판단할 수 있다. 이 모형은 __91%확률로 부정거래를 감지하고, 그 정확성은 80%이다.__
