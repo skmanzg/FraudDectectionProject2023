@@ -6,7 +6,6 @@
 import pandas as pd
 
 df = pd.read_csv('../data/Fraud_Detection_sql.csv')
-df.info()
 
 
 # ready for get_dummies() 카테고리 변수 변환을 위한 작업
@@ -16,24 +15,23 @@ df['TRANS_HOUR_SIMPLIFIED'] = df['TRANS_HOUR_SIMPLIFIED'].astype(str)
 df['CATEGORY'] = df['CATEGORY'].astype(str)
 df['STATE'] = df['STATE'].astype(str)
 
-# remove unnecessary columns for regression 불필요한 컬럼 제거
+# remove unnecessary columns 불필요한 컬럼 제거
 df = df.drop(columns='TRANS_YEAR')  
 df = df.drop(columns='TRANS_DAY')
 df = df.drop(columns='TRANS_HOUR')
 df = df.drop(columns='CC_NUM')
 df = df.drop(columns='AMT')
+df = df.drop(columns='CITY_POP')
 
 # those two requires too many columns for model  이 2개의 변수는 모형에 지나치게 많은 컬럼을 생성한다.
 df = df.drop(columns='CITY')
 df = df.drop(columns='JOB')
 
-
 # Unlike the AI model, the ML model uses those three columns below 
-# 인공지능 모형과 달리 머신러닝 모형은 아래 세 컬럼을 사용한다.
-
-# df = df.drop(columns='CITY_POP')
+# 인공지능 모형과 달리 머신러닝 모형은 아래 두 컬럼을 사용한다.
 # df = df.drop(columns='CATEGORY')
 # df = df.drop(columns='STATE')
+
 
 
 import lightgbm as lgb
@@ -89,7 +87,7 @@ model = lgb.train(params, train_data, num_boost_round=300)
 y_pred = model.predict(x_test)
 
 # Transform the prediction into binary numbers  예측값을 이진 분류로 변환
-y_pred_binary = [1 if pred >= 0.14 else 0 for pred in y_pred]
+y_pred_binary = [1 if pred >= 0.16 else 0 for pred in y_pred]
 
 # "Confusion Matrix 혼동행렬
 conf_matrix = confusion_matrix(y_test, y_pred_binary)
